@@ -1,0 +1,44 @@
+#! /bin/lua
+package.path = "./?.lua;"..package.path
+
+local lib = require "libconnect4"
+lib.init()
+
+local function displayGrid()
+  local line
+  for y = lib.sizeY, 1, -1 do
+    line = ""
+    for x = 1, lib.sizeX do
+      local char = lib.grid[x][y] == 1 and " X" or lib.grid[x][y] == 0 and "  " or " O"
+      line = line .. char
+    end
+    print(line)
+  end
+  line = ""
+  for i = 1, lib.sizeX do
+    line = line .. " "..i
+  end
+  print(line)
+end
+
+local player = 1
+local coords = {}
+while true do
+  displayGrid()
+  print("Your move, player "..player..". Please enter a column number.")
+  coords.x = tonumber(io.read())
+  if coords.x then
+    coords.y = lib.addPiece(coords.x, player)
+    if coords.y then
+      if lib.checkWin(coords) then
+        print("Player "..player.." wins!")
+        break
+      end
+      if player == 1 then
+        player = 2
+      else
+        player = 1
+      end
+    end
+  end
+end
